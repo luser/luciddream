@@ -1,3 +1,5 @@
 ve
 *~
 luciddream.egg-info
+*.pyc
+gecko.log
