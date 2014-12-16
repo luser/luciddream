@@ -15,10 +15,12 @@ Install this module and its Python prerequisites in a virtualenv:
 [Download a Firefox build](http://ftp.mozilla.org/pub/mozilla.org/firefox/nightly/latest-mozilla-central/) (if you don't already have one).
 
 
-[Download a Firefox OS emulator build](http://pvtbuilds.pvt.build.mozilla.org/pub/mozilla.org/b2g/tinderbox-builds/mozilla-central-emulator/) (if you don't already have one, this link requires Mozilla VPN access).
+Download one of:
+* [A Firefox OS emulator build](http://pvtbuilds.pvt.build.mozilla.org/pub/mozilla.org/b2g/tinderbox-builds/mozilla-central-emulator/) (if you don't already have one, this link requires Mozilla VPN access).
+* [A B2G desktop build](http://ftp.mozilla.org/pub/mozilla.org/b2g/nightly/latest-mozilla-central/)
 
 
-Unzip both your Firefox and your Firefox OS emulator somewhere.
+Unzip both your Firefox and your Firefox OS emulator/B2G desktop somewhere.
 
 If you're on a 64-bit Ubuntu, you may need to do some fiddling to ensure you have the 32-bit OpenGL libraries available. See the "Solution : have both 32bit and 64bit OpenGL libs installed, with the right symlinks" section [in this blog post](http://rishav006.wordpress.com/2014/05/19/how-to-build-b2g-emulator-in-linux-environment/).
 
@@ -26,6 +28,12 @@ If you're on a 64-bit Ubuntu, you may need to do some fiddling to ensure you hav
 Running Tests
 =============
 
+To run with a Firefox OS emulator:
 ```
 runluciddream --b2gpath /path/to/b2g-distro/ --browser-path /path/to/firefox/firefox example-tests/luciddream.ini
+```
+
+To run with B2G desktop:
+```
+runluciddream --b2g-desktop-path /path/to/b2g/b2g --browser-path /path/to/firefox/firefox example-tests/luciddream.ini
 ```

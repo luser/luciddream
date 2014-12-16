@@ -19,8 +19,10 @@ class CommandLineError(Exception):
     pass
 
 def validate_options(options):
-    if not options.b2gPath:
-        raise CommandLineError('You must specify --b2gpath')
+    if not (options.b2gPath or options.b2gDesktopPath):
+        raise CommandLineError('You must specify --b2gpath or --b2g-desktop-path')
+    if options.b2gPath and options.b2gDesktopPath:
+        raise CommandLineError('You may only use one of --b2gpath or --b2g-desktop-path')
     if not options.browserPath:
         raise CommandLineError('You must specify --browser-path')
     if not os.path.isfile(options.manifest):
@@ -37,6 +39,9 @@ def parse_args(in_args):
                         help='Architecture of emulator to use: x86 or arm')
     parser.add_argument('--b2gpath', dest='b2gPath', action='store',
                         help='path to B2G repo or qemu dir')
+    parser.add_argument('--b2g-desktop-path', dest='b2gDesktopPath',
+                        action='store',
+                        help='path to B2G desktop binary')
     parser.add_argument('--browser-path', dest='browserPath', action='store',
                         help='path to Firefox binary')
     parser.add_argument('manifest', metavar='MANIFEST', action='store',
@@ -98,12 +103,18 @@ def main():
     # (non-B2G) targets this won't match up very well, so maybe it ought to
     # be the browser?
     browser = start_browser(args.browserPath)
-    runner = LucidDreamTestRunner(
-        browser=browser,
-        homedir=args.b2gPath,
-        emulator=args.emulator,
-        logger=logger,
-    )
+    kwargs = {
+        'browser': browser,
+        'logger': logger,
+    }
+    if args.b2gPath:
+        kwargs['homedir'] = args.b2gPath
+        kwargs['emulator'] = args.emulator
+    elif args.b2gDesktopPath:
+        kwargs['binary'] = args.b2gDesktopPath
+        kwargs['app'] = 'b2gdesktop'
+    print(kwargs)
+    runner = LucidDreamTestRunner(**kwargs)
     runner.run_tests([args.manifest])
     if runner.failed > 0:
         sys.exit(10)
