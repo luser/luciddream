@@ -17,7 +17,7 @@ except IOError:
 version = '0.1'
 
 dependencies = [
-    'marionette-client>=0.8.4',
+    'marionette-client>=0.8.5',
     'mozlog',
 ]
 

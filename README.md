@@ -12,8 +12,6 @@ Install this module and its Python prerequisites in a virtualenv:
   python setup.py develop
 ```
 
-**Note: currently Luciddream requires an unreleased version of marionette-client to work around a bug in it, see [bug 1101539](https://bugzilla.mozilla.org/show_bug.cgi?id=1101539).**
-
 [Download a Firefox build](http://ftp.mozilla.org/pub/mozilla.org/firefox/nightly/latest-mozilla-central/) (if you don't already have one).
 
 
