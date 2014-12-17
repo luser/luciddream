@@ -13,20 +13,26 @@ import sys
 from luciddream import LucidDreamTestCase
 from marionette import Marionette
 from marionette.runner import BaseMarionetteTestRunner
+import marionette
 from mozlog import structured
+
 
 class CommandLineError(Exception):
     pass
 
+
 def validate_options(options):
     if not (options.b2gPath or options.b2gDesktopPath):
-        raise CommandLineError('You must specify --b2gpath or --b2g-desktop-path')
+        raise CommandLineError('You must specify --b2gpath or ' +
+                               '--b2g-desktop-path')
     if options.b2gPath and options.b2gDesktopPath:
-        raise CommandLineError('You may only use one of --b2gpath or --b2g-desktop-path')
+        raise CommandLineError('You may only use one of --b2gpath or ' +
+                               '--b2g-desktop-path')
     if not options.browserPath:
         raise CommandLineError('You must specify --browser-path')
     if not os.path.isfile(options.manifest):
-        raise CommandLineError('The manifest at "%s" does not exist!' % options.manifest)
+        raise CommandLineError('The manifest at "%s" does not exist!'
+                               % options.manifest)
 
 
 # BaseMarionetteOptions has a lot of stuff we don't care about, and
@@ -56,6 +62,16 @@ def parse_args(in_args):
         print('Error: ', e.args[0], file=sys.stderr)
         parser.print_help()
         raise
+
+
+class B2GDesktopInstance(marionette.geckoinstance.B2GDesktopInstance):
+    def __init__(self, **kwargs):
+        # Work around a mismatch in expectations between marionette
+        # client and server.
+        self.required_prefs['marionette.force-local'] = True
+        super(B2GDesktopInstance, self).__init__(**kwargs)
+
+marionette.geckoinstance.apps['b2gdesktop'] = B2GDesktopInstance
 
 
 class LucidDreamTestRunner(BaseMarionetteTestRunner):
@@ -113,7 +129,6 @@ def main():
     elif args.b2gDesktopPath:
         kwargs['binary'] = args.b2gDesktopPath
         kwargs['app'] = 'b2gdesktop'
-    print(kwargs)
     runner = LucidDreamTestRunner(**kwargs)
     runner.run_tests([args.manifest])
     if runner.failed > 0:
