@@ -64,16 +64,6 @@ def parse_args(in_args):
         raise
 
 
-class B2GDesktopInstance(marionette.geckoinstance.B2GDesktopInstance):
-    def __init__(self, **kwargs):
-        # Work around a mismatch in expectations between marionette
-        # client and server.
-        self.required_prefs['marionette.force-local'] = True
-        super(B2GDesktopInstance, self).__init__(**kwargs)
-
-marionette.geckoinstance.apps['b2gdesktop'] = B2GDesktopInstance
-
-
 class LucidDreamTestRunner(BaseMarionetteTestRunner):
     def __init__(self, **kwargs):
         BaseMarionetteTestRunner.__init__(self, **kwargs)
