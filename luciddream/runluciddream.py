@@ -28,6 +28,9 @@ def validate_options(options):
     if options.b2gPath and options.b2gDesktopPath:
         raise CommandLineError('You may only use one of --b2gpath or ' +
                                '--b2g-desktop-path')
+    if options.gaiaProfile and options.b2gPath:
+        raise CommandLineError('You may not use --gaia-profile with ' +
+                               '--b2gpath')
     if not options.browserPath:
         raise CommandLineError('You must specify --browser-path')
     if not os.path.isfile(options.manifest):
@@ -50,6 +53,8 @@ def parse_args(in_args):
                         help='path to B2G desktop binary')
     parser.add_argument('--browser-path', dest='browserPath', action='store',
                         help='path to Firefox binary')
+    parser.add_argument('--gaia-profile', dest='gaiaProfile', action='store',
+                        help='path to Gaia profile')
     parser.add_argument('manifest', metavar='MANIFEST', action='store',
                         help='path to manifest of tests to run')
     structured.commandline.add_logging_group(parser)
@@ -120,14 +125,21 @@ def main():
         # Work around bug 859952
         if '-bin' not in args.b2gDesktopPath:
             if args.b2gDesktopPath.endswith('.exe'):
-                args.b2gDesktopPath = args.b2gDesktopPath[:-4] + '-bin.exe'
+                newpath = args.b2gDesktopPath[:-4] + '-bin.exe'
             else:
-                args.b2gDesktopPath += '-bin'
+                newpath = args.b2gDesktopPath + '-bin'
+            if os.path.exists(newpath):
+                args.b2gDesktopPath = newpath
         kwargs['binary'] = args.b2gDesktopPath
         kwargs['app'] = 'b2gdesktop'
-        kwargs['profile'] = os.path.join(os.path.dirname(args.b2gDesktopPath),
-                                         'gaia',
-                                         'profile')
+        if args.gaiaProfile:
+            kwargs['profile'] = args.gaiaProfile
+        else:
+            kwargs['profile'] = os.path.join(
+                os.path.dirname(args.b2gDesktopPath),
+                'gaia',
+                'profile'
+            )
     runner = LucidDreamTestRunner(**kwargs)
     runner.run_tests([args.manifest])
     if runner.failed > 0:
