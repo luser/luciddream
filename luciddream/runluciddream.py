@@ -117,8 +117,17 @@ def main():
         kwargs['homedir'] = args.b2gPath
         kwargs['emulator'] = args.emulator
     elif args.b2gDesktopPath:
+        # Work around bug 859952
+        if '-bin' not in args.b2gDesktopPath:
+            if args.b2gDesktopPath.endswith('.exe'):
+                args.b2gDesktopPath = args.b2gDesktopPath[:-4] + '-bin.exe'
+            else:
+                args.b2gDesktopPath += '-bin'
         kwargs['binary'] = args.b2gDesktopPath
         kwargs['app'] = 'b2gdesktop'
+        kwargs['profile'] = os.path.join(os.path.dirname(args.b2gDesktopPath),
+                                         'gaia',
+                                         'profile')
     runner = LucidDreamTestRunner(**kwargs)
     runner.run_tests([args.manifest])
     if runner.failed > 0:
