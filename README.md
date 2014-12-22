@@ -52,3 +52,8 @@ To run with B2G desktop:
 ```
 runluciddream --b2g-desktop-path /path/to/b2g/b2g --browser-path /path/to/firefox/firefox example-tests/luciddream.ini
 ```
+
+If you're using a locally-built B2G desktop build which doesn't have a Gaia profile included you should get Gaia and build a profile, and then pass that in with the `--gaia-profile` option:
+```
+runluciddream --b2g-desktop-path /path/to/obj-b2g/dist/bin/b2g --gaia-profile /path/to/gaia/profile --browser-path /path/to/firefox/firefox example-tests/luciddream.ini
+```
