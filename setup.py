@@ -16,10 +16,7 @@ except IOError:
 
 version = '0.1'
 
-dependencies = [
-    'marionette-client>=0.8.5',
-    'mozlog',
-]
+dependencies = open('requirements.txt', 'r').read().splitlines()
 
 setup(
     name='luciddream',
